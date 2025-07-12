@@ -1,0 +1,27 @@
+# Model Configuration
+model_path: "models/yolov8n.pt"
+confidence_threshold: 0.6
+iou_threshold: 0.5
+
+# Cart Configuration
+cart_id: "cart_001"
+backend_url: "http://localhost:8000"
+label_map_path: "config/sku_map.json"
+
+# Detection Settings
+removal_timeout: 3
+stabilization_frames: 5
+frame_skip: 2
+
+# API Settings
+max_retry_attempts: 3
+retry_delay: 1.0
+api_timeout: 5
+
+# Video Settings
+video_source: 0
+display_window: true
+
+# Logging
+log_level: "INFO"
+log_to_file: true
