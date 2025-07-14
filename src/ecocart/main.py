@@ -158,7 +158,7 @@ class GroceryCartTracker:
                 continue
                 
             bbox = tuple(map(int, box.xyxy[0]))
-            sku = self.label_to_sku[label]
+            sku = self.label_to_sku[label]["sku"]
             
             # Check if this detection matches an existing item
             matched_key = None
@@ -234,7 +234,7 @@ class GroceryCartTracker:
                 continue
                 
             x1, y1, x2, y2 = map(int, box.xyxy[0])
-            sku = self.label_to_sku[label]
+            sku = self.label_to_sku[label]["sku"]
             
             # Color based on confirmation status
             color = (0, 255, 0) if any(item.confirmed and item.label == label 

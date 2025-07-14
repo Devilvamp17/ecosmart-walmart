@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoCart - Sustainable Shopping</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #dbeafe;
+            --secondary: #64748b;
+            --secondary-light: #f8fafc;
+            --background: #ffffff;
+            --background-alt: #f9fafb;
+            --surface: #ffffff;
+            --surface-elevated: #ffffff;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-tertiary: #94a3b8;
+            --success: #059669;
+            --success-light: #d1fae5;
+            --success-solid: #10b981;
+            --danger: #dc2626;
+            --danger-light: #fef2f2;
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+            --warning-solid: #f59e0b;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="dark"] {
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --primary-light: #1e3a8a;
+            --secondary: #94a3b8;
+            --secondary-light: #1e293b;
+            --background: #0f172a;
+            --background-alt: #1e293b;
+            --surface: #1e293b;
+            --surface-elevated: #334155;
+            --border: #475569;
+            --border-light: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-tertiary: #94a3b8;
+            --success: #10b981;
+            --success-light: #064e3b;
+            --success-solid: #059669;
+            --danger: #ef4444;
+            --danger-light: #7f1d1d;
+            --warning: #f59e0b;
+            --warning-light: #78350f;
+            --warning-solid: #d97706;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-alt);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .theme-toggle:hover {
+            background: var(--background-alt);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .theme-icon {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--success-light);
+            color: var(--success);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-light);
+            background: var(--background-alt);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card-title {
+            margin: 0;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            transition: color 0.3s ease;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .bill-summary {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .bill-label {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .bill-total {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--success);
+            margin: 0 0 1rem 0;
+            letter-spacing: -0.025em;
+            transition: color 0.3s ease;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .btn-ghost:hover {
+            background: var(--background-alt);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.8125rem;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .accordion {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .accordion-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .accordion-item:hover {
+            border-color: var(--primary-light);
+        }
+
+        .accordion-header {
+            padding: 1.25rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .accordion-header:hover {
+            background: var(--background-alt);
+        }
+
+        .accordion-header.active {
+            background: var(--primary-light);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .accordion-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .accordion-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .item-meta {
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+            transition: color 0.3s ease;
+        }
+
+        .item-price {
+            font-weight: 700;
+            color: var(--success);
+            font-size: 1.125rem;
+            transition: color 0.3s ease;
+        }
+
+        .chevron {
+            width: 20px;
+            height: 20px;
+            color: var(--text-tertiary);
+            transition: transform 0.2s ease, color 0.3s ease;
+        }
+
+        .chevron.rotated {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .accordion-content.expanded {
+            max-height: 500px;
+        }
+
+        .accordion-body {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-light);
+            background: var(--background-alt);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .impact-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .impact-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .impact-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        .carbon-info {
+            background: var(--warning-solid);
+            color: white;
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .carbon-amount {
+            font-weight: 600;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .carbon-description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.8125rem;
+            margin-top: 0.25rem;
+        }
+
+        .alternatives {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .alternative-item {
+            background: var(--success-solid);
+            color: white;
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            position: relative;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .alternative-name {
+            font-weight: 600;
+            color: white;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .alternative-benefit {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.8125rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-tertiary);
+            transition: color 0.3s ease;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+
+        .empty-state p {
+            margin: 0;
+            font-size: 0.875rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+            
+            .header-content {
+                padding: 0 1rem;
+            }
+            
+            .header-left {
+                gap: 1rem;
+            }
+            
+            .theme-toggle {
+                padding: 0.5rem;
+            }
+            
+            .theme-toggle span {
+                display: none;
+            }
+            
+            .bill-total {
+                font-size: 2rem;
+            }
+            
+            .card-body {
+                padding: 1.5rem;
+            }
+            
+            .accordion-header {
+                padding: 1rem 1.25rem;
+            }
+            
+            .accordion-body {
+                padding: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <a href="#" class="logo">
+                    <div class="logo-icon">🌱</div>
+                    EcoCart
+                </a>
+                <div class="theme-toggle" onclick="toggleTheme()">
+                    <svg class="theme-icon" id="theme-icon" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 3V1m0 22v-2m9-9h2M1 12h2m15.36-6.36L19.78 4.22M4.22 4.22l1.42 1.42m0 12.72L4.22 19.78m15.56 0l-1.42-1.42M12 7a5 5 0 100 10 5 5 0 000-10z"/>
+                    </svg>
+                    <span>Light</span>
+                </div>
+            </div>
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                Live Updates
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Bill Summary</h2>
+            </div>
+            <div class="card-body">
+                <div class="bill-summary">
+                    <div class="bill-label">Total Amount</div>
+                    <div class="bill-total" id="total-bill">$0.00</div>
+                </div>
+                <button class="btn btn-primary btn-full" onclick="clearBill()">
+                    Clear Bill
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Shopping Cart</h2>
+            </div>
+            <div class="card-body">
+                <div class="accordion" id="item-accordion">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🛍️</div>
+                        <h3>No items yet</h3>
+                        <p>Items will appear here as they're added to your cart</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 EcoCart. Building a sustainable future, one purchase at a time.</p>
+    </footer>
+
+    <script>
+        let expandedItems = new Set();
+
+        // Theme management
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('theme-icon');
+            const text = document.querySelector('.theme-toggle span');
+            
+            if (theme === 'dark') {
+                icon.innerHTML = '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>';
+                text.textContent = 'Dark';
+            } else {
+                icon.innerHTML = '<path d="M12 3V1m0 22v-2m9-9h2M1 12h2m15.36-6.36L19.78 4.22M4.22 4.22l1.42 1.42m0 12.72L4.22 19.78m15.56 0l-1.42-1.42M12 7a5 5 0 100 10 5 5 0 000-10z"/>';
+                text.textContent = 'Light';
+            }
+        }
+
+        function toTitleCase(str) {
+            return str.replace(
+                /\w\S*/g,
+                function(txt) {
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                }
+            );
+        }
+
+        function formatRelativeTime(date) {
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+            
+            if (diffInSeconds < 60) return 'Just now';
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+            return date.toLocaleDateString();
+        }
+
+        function toggleAccordion(itemId) {
+            const content = document.getElementById(`content-${itemId}`);
+            const chevron = document.getElementById(`chevron-${itemId}`);
+            const header = document.getElementById(`header-${itemId}`);
+            
+            if (expandedItems.has(itemId)) {
+                expandedItems.delete(itemId);
+                content.classList.remove('expanded');
+                chevron.classList.remove('rotated');
+                header.classList.remove('active');
+            } else {
+                expandedItems.add(itemId);
+                content.classList.add('expanded');
+                chevron.classList.add('rotated');
+                header.classList.add('active');
+            }
+        }
+
+        function generateCarbonInfo(itemName) {
+            // Mock carbon footprint data - in real app this would come from API
+            const carbonData = {
+                'apple': { amount: '0.3 kg CO2', description: 'Lower carbon footprint compared to imported fruits' },
+                'banana': { amount: '0.5 kg CO2', description: 'Transported from tropical regions' },
+                'beef': { amount: '27 kg CO2', description: 'High carbon footprint due to livestock farming' },
+                'chicken': { amount: '6.9 kg CO2', description: 'Moderate carbon footprint from poultry farming' },
+                'milk': { amount: '3.2 kg CO2', description: 'Dairy production contributes to greenhouse gases' },
+                'bread': { amount: '0.9 kg CO2', description: 'Wheat production and processing' },
+                'rice': { amount: '2.7 kg CO2', description: 'Methane emissions from rice paddies' },
+                'pasta': { amount: '1.1 kg CO2', description: 'Wheat processing and packaging' }
+            };
+
+            const key = itemName.toLowerCase();
+            return carbonData[key] || { amount: '1.5 kg CO2', description: 'Estimated carbon footprint' };
+        }
+
+        function generateAlternatives(itemName) {
+            // Mock sustainable alternatives - in real app this would come from API
+            const alternatives = {
+                'beef': [
+                    { name: 'Plant-based protein', benefit: '95% less carbon footprint' },
+                    { name: 'Locally-sourced chicken', benefit: '75% less carbon footprint' }
+                ],
+                'milk': [
+                    { name: 'Oat milk', benefit: '80% less carbon footprint' },
+                    { name: 'Almond milk', benefit: '70% less carbon footprint' }
+                ],
+                'banana': [
+                    { name: 'Local seasonal fruits', benefit: '60% less transportation emissions' },
+                    { name: 'Organic bananas', benefit: '30% less environmental impact' }
+                ],
+                'rice': [
+                    { name: 'Quinoa', benefit: '50% less methane emissions' },
+                    { name: 'Local grains', benefit: '40% less transportation impact' }
+                ]
+            };
+
+            const key = itemName.toLowerCase();
+            return alternatives[key] || [
+                { name: 'Organic alternative', benefit: '30% less environmental impact' },
+                { name: 'Local sourced option', benefit: '50% less transportation emissions' }
+            ];
+        }
+
+        async function fetchBill() {
+            try {
+                const response = await fetch('/bill');
+                const data = await response.json();
+                
+                document.getElementById('total-bill').innerText = `$${data.total_bill.toFixed(2)}`;
+
+                const accordion = document.getElementById('item-accordion');
+                
+                if (data.items.length === 0) {
+                    accordion.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🛍️</div>
+                            <h3>No items yet</h3>
+                            <p>Items will appear here as they're added to your cart</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Sort items by timestamp (newest first)
+                data.items.sort((a, b) => new Date(b[3]).getTime() - new Date(a[3]).getTime());
+
+                accordion.innerHTML = data.items.map(item => {
+                    const itemId = item[0];
+                    const itemName = toTitleCase(item[1]);
+                    const itemPrice = item[2];
+                    const timestamp = new Date(item[3]);
+                    const isExpanded = expandedItems.has(itemId);
+                    
+                    const carbonInfo = generateCarbonInfo(itemName);
+                    const alternatives = generateAlternatives(itemName);
+                    
+                    return `
+                        <div class="accordion-item">
+                            <div class="accordion-header ${isExpanded ? 'active' : ''}" id="header-${itemId}" onclick="toggleAccordion(${itemId})">
+                                <div class="accordion-left">
+                                    <div class="item-info">
+                                        <div class="item-name">${itemName}</div>
+                                        <div class="item-meta">Added ${formatRelativeTime(timestamp)}</div>
+                                    </div>
+                                </div>
+                                <div class="accordion-right">
+                                    <div class="item-price">$${itemPrice.toFixed(2)}</div>
+                                    <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); removeItem(${itemId})">
+                                        Remove
+                                    </button>
+                                    <svg class="chevron ${isExpanded ? 'rotated' : ''}" id="chevron-${itemId}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="accordion-content ${isExpanded ? 'expanded' : ''}" id="content-${itemId}">
+                                <div class="accordion-body">
+                                    <div class="impact-section">
+                                        <div class="impact-title">
+                                            <svg class="impact-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                            </svg>
+                                            Carbon Footprint
+                                        </div>
+                                        <div class="carbon-info">
+                                            <div class="carbon-amount">${carbonInfo.amount}</div>
+                                            <div class="carbon-description">${carbonInfo.description}</div>
+                                        </div>
+                                    </div>
+                                    <div class="impact-section">
+                                        <div class="impact-title">
+                                            <svg class="impact-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            Sustainable Alternatives
+                                        </div>
+                                        <div class="alternatives">
+                                            ${alternatives.map(alt => `
+                                                <div class="alternative-item">
+                                                    <div class="alternative-name">${alt.name}</div>
+                                                    <div class="alternative-benefit">${alt.benefit}</div>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error fetching bill:', error);
+            }
+        }
+
+        async function clearBill() {
+            try {
+                expandedItems.clear();
+                await fetch('/bill/clear', { method: 'POST' });
+                fetchBill();
+            } catch (error) {
+                console.error('Error clearing bill:', error);
+            }
+        }
+
+        async function removeItem(itemId) {
+            try {
+                expandedItems.delete(itemId);
+                await fetch(`/bill/remove/${itemId}`, { method: 'POST' });
+                fetchBill();
+            } catch (error) {
+                console.error('Error removing item:', error);
+            }
+        }
+
+        // Initialize theme and fetch bill
+        initializeTheme();
+        fetchBill();
+        setInterval(fetchBill, 2000);
+    </script>
+</body>
+</html>

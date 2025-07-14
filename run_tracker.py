@@ -14,7 +14,7 @@ def main():
     parser.add_argument('--cart-id', default='cart_001', help='Cart ID')
     parser.add_argument('--backend-url', default='http://localhost:8000', help='Backend URL')
     parser.add_argument('--video-source', type=int, default=0, help='Video source (0 for webcam)')
-    parser.add_argument('--confidence', type=float, default=0.6, help='Confidence threshold')
+    parser.add_argument('--confidence', type=float, default=0.3, help='Confidence threshold')
     parser.add_argument('--no-display', action='store_true', help='Disable video display')
     
     args = parser.parse_args()

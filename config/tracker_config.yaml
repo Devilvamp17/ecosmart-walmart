@@ -1,6 +1,6 @@
 # Model Configuration
 model_path: "models/yolov8n.pt"
-confidence_threshold: 0.6
+confidence_threshold: 0.4
 iou_threshold: 0.5
 
 # Cart Configuration

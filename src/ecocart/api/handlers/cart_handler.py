@@ -3,6 +3,7 @@
 from typing import Dict
 from src.ecocart.api.state import cart_db
 import time
+from src.ecocart.database import add_item_to_bill
 
 def add_item(cart_id: str, sku: str, label: str, confidence: float, timestamp: float) -> Dict:
     item = {
@@ -12,7 +13,9 @@ def add_item(cart_id: str, sku: str, label: str, confidence: float, timestamp: f
         "timestamp": timestamp
     }
     cart_db[cart_id].append(item)
+    add_item_to_bill(label) # Add item to the SQLite database
     return {"status": "success", "message": f"Item {label} added."}
+
 
 def remove_item(cart_id: str, sku: str, label: str, timestamp: float) -> Dict:
     if cart_id not in cart_db:
