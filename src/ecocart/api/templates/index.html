@@ -171,6 +171,33 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
+	.header-right {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.status-badge-coins {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--warning-light);
+            color: var(--warning);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease, color 0.3s ease;
+	}
+
+	.status-dot-coin {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--warning);
+            animation: pulse 2s infinite;
+        }
+
         .status-dot {
             width: 6px;
             height: 6px;
@@ -555,6 +582,39 @@
                 padding: 1.25rem;
             }
         }
+
+        /* Toast Notification Styles */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .toast {
+            background-color: var(--warning-solid);
+            color: white;
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-md);
+            opacity: 0;
+            transform: translateX(20px);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
@@ -572,279 +632,324 @@
                     <span>Light</span>
                 </div>
             </div>
-            <div class="status-badge">
-                <div class="status-dot"></div>
-                Live Updates
-            </div>
-        </div>
+	    <div class="header-right">
+		    <div class="status-badge-coins">
+			    <div class="status-dot-coin"></div>
+			    <span id="coin-count">0</span> Coins
+		    </div>
+
+
+		    <div class="status-badge">
+			    <div class="status-dot"></div>
+			    Live Updates
+		    </div>
+	    </div>
+	</div>
     </header>
 
     <main class="container">
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">Bill Summary</h2>
-            </div>
-            <div class="card-body">
-                <div class="bill-summary">
-                    <div class="bill-label">Total Amount</div>
-                    <div class="bill-total" id="total-bill">$0.00</div>
-                </div>
-                <button class="btn btn-primary btn-full" onclick="clearBill()">
-                    Clear Bill
-                </button>
-            </div>
-        </div>
+	    <div class="card">
+		    <div class="card-header">
+			    <h2 class="card-title">Bill Summary</h2>
+		    </div>
+		    <div class="card-body">
+			    <div class="bill-summary">
+				    <div class="bill-label">Total Amount</div>
+				    <div class="bill-total" id="total-bill">$0.00</div>
+			    </div>
+			    <button class="btn btn-primary btn-full" onclick="clearBill()">
+				    Clear Bill
+			    </button>
+		    </div>
+	    </div>
 
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">Shopping Cart</h2>
-            </div>
-            <div class="card-body">
-                <div class="accordion" id="item-accordion">
-                    <div class="empty-state">
-                        <div class="empty-state-icon">🛍️</div>
-                        <h3>No items yet</h3>
-                        <p>Items will appear here as they're added to your cart</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+	    <div class="card">
+		    <div class="card-header">
+			    <h2 class="card-title">Shopping Cart</h2>
+		    </div>
+		    <div class="card-body">
+			    <div class="accordion" id="item-accordion">
+				    <div class="empty-state">
+					    <div class="empty-state-icon">🛍️</div>
+					    <h3>No items yet</h3>
+					    <p>Items will appear here as they're added to your cart</p>
+				    </div>
+			    </div>
+		    </div>
+	    </div>
     </main>
 
     <footer class="footer">
-        <p>&copy; 2025 EcoCart. Building a sustainable future, one purchase at a time.</p>
+	    <p>&copy; 2025 EcoCart. Building a sustainable future, one purchase at a time.</p>
     </footer>
 
+    <div id="toast-container" class="toast-container"></div>
+
     <script>
-        let expandedItems = new Set();
+	    let expandedItems = new Set();
 
-        // Theme management
-        function initializeTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            updateThemeIcon(savedTheme);
+	    // Theme management
+	    function initializeTheme() {
+		    const savedTheme = localStorage.getItem('theme') || 'light';
+		    document.documentElement.setAttribute('data-theme', savedTheme);
+		    updateThemeIcon(savedTheme);
+	    }
+
+	    function toggleTheme() {
+		    const currentTheme = document.documentElement.getAttribute('data-theme');
+		    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+		    document.documentElement.setAttribute('data-theme', newTheme);
+		    localStorage.setItem('theme', newTheme);
+		    updateThemeIcon(newTheme);
+	    }
+
+	    function updateThemeIcon(theme) {
+		    const icon = document.getElementById('theme-icon');
+		    const text = document.querySelector('.theme-toggle span');
+
+		    if (theme === 'dark') {
+			    icon.innerHTML = '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>';
+			    text.textContent = 'Dark';
+		    } else {
+			    icon.innerHTML = '<path d="M12 3V1m0 22v-2m9-9h2M1 12h2m15.36-6.36L19.78 4.22M4.22 4.22l1.42 1.42m0 12.72L4.22 19.78m15.56 0l-1.42-1.42M12 7a5 5 0 100 10 5 5 0 000-10z"/>';
+			    text.textContent = 'Light';
+		    }
+	    }
+
+	    function toTitleCase(str) {
+		    return str.replace(
+			    /\w\S*/g,
+			    function(txt) {
+				    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+			    }
+		    );
+	    }
+
+	    function formatRelativeTime(date) {
+		    const now = new Date();
+		    const diffInSeconds = Math.floor((now - date) / 1000);
+
+		    if (diffInSeconds < 60) return 'Just now';
+		    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+		    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+		    return date.toLocaleDateString();
+	    }
+
+	    function toggleAccordion(itemId) {
+		    const content = document.getElementById(`content-${itemId}`);
+		    const chevron = document.getElementById(`chevron-${itemId}`);
+		    const header = document.getElementById(`header-${itemId}`);
+
+		    if (expandedItems.has(itemId)) {
+			    expandedItems.delete(itemId);
+			    content.classList.remove('expanded');
+			    chevron.classList.remove('rotated');
+			    header.classList.remove('active');
+		    } else {
+			    expandedItems.add(itemId);
+			    content.classList.add('expanded');
+			    chevron.classList.add('rotated');
+			    header.classList.add('active');
+		    }
+	    }
+
+        function showToast(message) {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.classList.add('toast');
+            toast.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-8.5"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                ${message}
+            `;
+            toastContainer.appendChild(toast);
+
+            // Trigger reflow to enable transition
+            void toast.offsetWidth; 
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.addEventListener('transitionend', () => toast.remove());
+            }, 3000); // Toast disappears after 3 seconds
         }
 
-        function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateThemeIcon(newTheme);
+        function updateCoins(amount) {
+            const coinCountElement = document.getElementById('coin-count');
+            let currentCoins = parseInt(coinCountElement.innerText);
+            currentCoins += amount;
+            coinCountElement.innerText = currentCoins;
         }
 
-        function updateThemeIcon(theme) {
-            const icon = document.getElementById('theme-icon');
-            const text = document.querySelector('.theme-toggle span');
-            
-            if (theme === 'dark') {
-                icon.innerHTML = '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>';
-                text.textContent = 'Dark';
-            } else {
-                icon.innerHTML = '<path d="M12 3V1m0 22v-2m9-9h2M1 12h2m15.36-6.36L19.78 4.22M4.22 4.22l1.42 1.42m0 12.72L4.22 19.78m15.56 0l-1.42-1.42M12 7a5 5 0 100 10 5 5 0 000-10z"/>';
-                text.textContent = 'Light';
-            }
-        }
+	    function generateCarbonInfo(itemName) {
+		    // Mock carbon footprint data - in real app this would come from API
+		    const carbonData = {
+			    'apple': { amount: '0.3 kg CO2', description: 'Lower carbon footprint compared to imported fruits' },
+			    'banana': { amount: '0.5 kg CO2', description: 'Transported from tropical regions' },
+			    'beef': { amount: '27 kg CO2', description: 'High carbon footprint due to livestock farming' },
+			    'chicken': { amount: '6.9 kg CO2', description: 'Moderate carbon footprint from poultry farming' },
+			    'milk': { amount: '3.2 kg CO2', description: 'Dairy production contributes to greenhouse gases' },
+			    'bread': { amount: '0.9 kg CO2', description: 'Wheat production and processing' },
+			    'rice': { amount: '2.7 kg CO2', description: 'Methane emissions from rice paddies' },
+			    'pasta': { amount: '1.1 kg CO2', description: 'Wheat processing and packaging' }
+		    };
 
-        function toTitleCase(str) {
-            return str.replace(
-                /\w\S*/g,
-                function(txt) {
-                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-                }
-            );
-        }
+		    const key = itemName.toLowerCase();
+		    return carbonData[key] || { amount: '1.5 kg CO2', description: 'Estimated carbon footprint' };
+	    }
 
-        function formatRelativeTime(date) {
-            const now = new Date();
-            const diffInSeconds = Math.floor((now - date) / 1000);
-            
-            if (diffInSeconds < 60) return 'Just now';
-            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-            return date.toLocaleDateString();
-        }
+	    function generateAlternatives(itemName) {
+		    // Mock sustainable alternatives - in real app this would come from API
+		    const alternatives = {
+			    'beef': [
+				    { name: 'Plant-based protein', benefit: '95% less carbon footprint' },
+				    { name: 'Locally-sourced chicken', benefit: '75% less carbon footprint' }
+			    ],
+			    'milk': [
+				    { name: 'Oat milk', benefit: '80% less carbon footprint' },
+				    { name: 'Almond milk', benefit: '70% less carbon footprint' }
+			    ],
+			    'banana': [
+				    { name: 'Local seasonal fruits', benefit: '60% less transportation emissions' },
+				    { name: 'Organic bananas', benefit: '30% less environmental impact' }
+			    ],
+			    'rice': [
+				    { name: 'Quinoa', benefit: '50% less methane emissions' },
+				    { name: 'Local grains', benefit: '40% less transportation impact' }
+			    ]
+		    };
 
-        function toggleAccordion(itemId) {
-            const content = document.getElementById(`content-${itemId}`);
-            const chevron = document.getElementById(`chevron-${itemId}`);
-            const header = document.getElementById(`header-${itemId}`);
-            
-            if (expandedItems.has(itemId)) {
-                expandedItems.delete(itemId);
-                content.classList.remove('expanded');
-                chevron.classList.remove('rotated');
-                header.classList.remove('active');
-            } else {
-                expandedItems.add(itemId);
-                content.classList.add('expanded');
-                chevron.classList.add('rotated');
-                header.classList.add('active');
-            }
-        }
+		    const key = itemName.toLowerCase();
+		    return alternatives[key] || [
+			    { name: 'Organic alternative', benefit: '30% less environmental impact' },
+			    { name: 'Local sourced option', benefit: '50% less transportation emissions' }
+		    ];
+	    }
 
-        function generateCarbonInfo(itemName) {
-            // Mock carbon footprint data - in real app this would come from API
-            const carbonData = {
-                'apple': { amount: '0.3 kg CO2', description: 'Lower carbon footprint compared to imported fruits' },
-                'banana': { amount: '0.5 kg CO2', description: 'Transported from tropical regions' },
-                'beef': { amount: '27 kg CO2', description: 'High carbon footprint due to livestock farming' },
-                'chicken': { amount: '6.9 kg CO2', description: 'Moderate carbon footprint from poultry farming' },
-                'milk': { amount: '3.2 kg CO2', description: 'Dairy production contributes to greenhouse gases' },
-                'bread': { amount: '0.9 kg CO2', description: 'Wheat production and processing' },
-                'rice': { amount: '2.7 kg CO2', description: 'Methane emissions from rice paddies' },
-                'pasta': { amount: '1.1 kg CO2', description: 'Wheat processing and packaging' }
-            };
+	    async function fetchBill() {
+		    try {
+			    const response = await fetch('/bill');
+			    const data = await response.json();
 
-            const key = itemName.toLowerCase();
-            return carbonData[key] || { amount: '1.5 kg CO2', description: 'Estimated carbon footprint' };
-        }
+			    document.getElementById('total-bill').innerText = `$${data.total_bill.toFixed(2)}`;
 
-        function generateAlternatives(itemName) {
-            // Mock sustainable alternatives - in real app this would come from API
-            const alternatives = {
-                'beef': [
-                    { name: 'Plant-based protein', benefit: '95% less carbon footprint' },
-                    { name: 'Locally-sourced chicken', benefit: '75% less carbon footprint' }
-                ],
-                'milk': [
-                    { name: 'Oat milk', benefit: '80% less carbon footprint' },
-                    { name: 'Almond milk', benefit: '70% less carbon footprint' }
-                ],
-                'banana': [
-                    { name: 'Local seasonal fruits', benefit: '60% less transportation emissions' },
-                    { name: 'Organic bananas', benefit: '30% less environmental impact' }
-                ],
-                'rice': [
-                    { name: 'Quinoa', benefit: '50% less methane emissions' },
-                    { name: 'Local grains', benefit: '40% less transportation impact' }
-                ]
-            };
+                // Fetch and update coin count
+			    const coinsData = {coins: 0};
+                document.getElementById('coin-count').innerText = coinsData.coins;
 
-            const key = itemName.toLowerCase();
-            return alternatives[key] || [
-                { name: 'Organic alternative', benefit: '30% less environmental impact' },
-                { name: 'Local sourced option', benefit: '50% less transportation emissions' }
-            ];
-        }
+			    const accordion = document.getElementById('item-accordion');
 
-        async function fetchBill() {
-            try {
-                const response = await fetch('/bill');
-                const data = await response.json();
-                
-                document.getElementById('total-bill').innerText = `$${data.total_bill.toFixed(2)}`;
+			    if (data.items.length === 0) {
+				    accordion.innerHTML = `
+			<div class="empty-state">
+			    <div class="empty-state-icon">🛍️</div>
+			    <h3>No items yet</h3>
+			    <p>Items will appear here as they're added to your cart</p>
+			</div>
+		    `;
+				    return;
+			    }
 
-                const accordion = document.getElementById('item-accordion');
-                
-                if (data.items.length === 0) {
-                    accordion.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-state-icon">🛍️</div>
-                            <h3>No items yet</h3>
-                            <p>Items will appear here as they're added to your cart</p>
-                        </div>
-                    `;
-                    return;
-                }
+			    // Sort items by timestamp (newest first)
+			    data.items.sort((a, b) => new Date(b[3]).getTime() - new Date(a[3]).getTime());
 
-                // Sort items by timestamp (newest first)
-                data.items.sort((a, b) => new Date(b[3]).getTime() - new Date(a[3]).getTime());
+			    accordion.innerHTML = data.items.map(item => {
+				    const itemId = item[0];
+				    const itemName = toTitleCase(item[1]);
+				    const itemPrice = item[2];
+				    const timestamp = new Date(item[3]);
+				    const isExpanded = expandedItems.has(itemId);
 
-                accordion.innerHTML = data.items.map(item => {
-                    const itemId = item[0];
-                    const itemName = toTitleCase(item[1]);
-                    const itemPrice = item[2];
-                    const timestamp = new Date(item[3]);
-                    const isExpanded = expandedItems.has(itemId);
-                    
-                    const carbonInfo = generateCarbonInfo(itemName);
-                    const alternatives = generateAlternatives(itemName);
-                    
-                    return `
-                        <div class="accordion-item">
-                            <div class="accordion-header ${isExpanded ? 'active' : ''}" id="header-${itemId}" onclick="toggleAccordion(${itemId})">
-                                <div class="accordion-left">
-                                    <div class="item-info">
-                                        <div class="item-name">${itemName}</div>
-                                        <div class="item-meta">Added ${formatRelativeTime(timestamp)}</div>
-                                    </div>
-                                </div>
-                                <div class="accordion-right">
-                                    <div class="item-price">$${itemPrice.toFixed(2)}</div>
-                                    <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); removeItem(${itemId})">
-                                        Remove
-                                    </button>
-                                    <svg class="chevron ${isExpanded ? 'rotated' : ''}" id="chevron-${itemId}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="accordion-content ${isExpanded ? 'expanded' : ''}" id="content-${itemId}">
-                                <div class="accordion-body">
-                                    <div class="impact-section">
-                                        <div class="impact-title">
-                                            <svg class="impact-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                                            </svg>
-                                            Carbon Footprint
-                                        </div>
-                                        <div class="carbon-info">
-                                            <div class="carbon-amount">${carbonInfo.amount}</div>
-                                            <div class="carbon-description">${carbonInfo.description}</div>
-                                        </div>
-                                    </div>
-                                    <div class="impact-section">
-                                        <div class="impact-title">
-                                            <svg class="impact-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                            </svg>
-                                            Sustainable Alternatives
-                                        </div>
-                                        <div class="alternatives">
-                                            ${alternatives.map(alt => `
-                                                <div class="alternative-item">
-                                                    <div class="alternative-name">${alt.name}</div>
-                                                    <div class="alternative-benefit">${alt.benefit}</div>
-                                                </div>
-                                            `).join('')}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            } catch (error) {
-                console.error('Error fetching bill:', error);
-            }
-        }
+				    const carbonInfo = generateCarbonInfo(itemName);
+				    const alternatives = generateAlternatives(itemName);
 
-        async function clearBill() {
-            try {
-                expandedItems.clear();
-                await fetch('/bill/clear', { method: 'POST' });
-                fetchBill();
-            } catch (error) {
-                console.error('Error clearing bill:', error);
-            }
-        }
+				    return `
+			<div class="accordion-item">
+			    <div class="accordion-header ${isExpanded ? 'active' : ''}" id="header-${itemId}" onclick="toggleAccordion(${itemId})">
+				<div class="accordion-left">
+				    <div class="item-info">
+					<div class="item-name">${itemName}</div>
+					<div class="item-meta">Added ${formatRelativeTime(timestamp)}</div>
+				    </div>
+				</div>
+				<div class="accordion-right">
+				    <div class="item-price">$${itemPrice.toFixed(2)}</div>
+				    <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); removeItem(${itemId})">
+					Remove
+				    </button>
+				    <svg class="chevron ${isExpanded ? 'rotated' : ''}" id="chevron-${itemId}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+				    </svg>
+				</div>
+			    </div>
+			    <div class="accordion-content ${isExpanded ? 'expanded' : ''}" id="content-${itemId}">
+				<div class="accordion-body">
+				    <div class="impact-section">
+					<div class="impact-title">
+					    <svg class="impact-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+					    </svg>
+					    Carbon Footprint
+					</div>
+					<div class="carbon-info">
+					    <div class="carbon-amount">${carbonInfo.amount}</div>
+					    <div class="carbon-description">${carbonInfo.description}</div>
+					</div>
+				    </div>
+				    <div class="impact-section">
+					<div class="impact-title">
+					    <svg class="impact-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+					    </svg>
+					    Sustainable Alternatives
+					</div>
+					<div class="alternatives">
+					    ${alternatives.map(alt => `
+						<div class="alternative-item">
+						    <div class="alternative-name">${alt.name}</div>
+						    <div class="alternative-benefit">${alt.benefit}</div>
+                            <button class="btn btn-primary btn-sm" onclick="showToast('+10 coins'); updateCoins(10);">I'd like to choose this instead</button>
+						</div>
+					    `).join('')}
+					</div>
+				    </div>
+				</div>
+			    </div>
+			</div>
+		    `;
+			    }).join('');
+		    } catch (error) {
+			    console.error('Error fetching bill:', error);
+		    }
+	    }
 
-        async function removeItem(itemId) {
-            try {
-                expandedItems.delete(itemId);
-                await fetch(`/bill/remove/${itemId}`, { method: 'POST' });
-                fetchBill();
-            } catch (error) {
-                console.error('Error removing item:', error);
-            }
-        }
+	    async function clearBill() {
+		    try {
+			    expandedItems.clear();
+			    await fetch('/bill/clear', { method: 'POST' });
+			    fetchBill();
+		    } catch (error) {
+			    console.error('Error clearing bill:', error);
+		    }
+	    }
 
-        // Initialize theme and fetch bill
-        initializeTheme();
-        fetchBill();
-        setInterval(fetchBill, 2000);
+	    async function removeItem(itemId) {
+		    try {
+			    expandedItems.delete(itemId);
+			    await fetch(`/bill/remove/${itemId}`, { method: 'POST' });
+			    fetchBill();
+		    } catch (error) {
+			    console.error('Error removing item:', error);
+		    }
+	    }
+
+	    // Initialize theme and fetch bill
+	    initializeTheme();
+	    fetchBill();
+	    setInterval(fetchBill, 2000);
     </script>
 </body>
 </html>

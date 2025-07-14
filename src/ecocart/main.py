@@ -82,6 +82,7 @@ class GroceryCartTracker:
             lambda: deque(maxlen=self.config.STABILIZATION_FRAMES)
         )
         self.frame_count = 0
+        self.coins = 0
         
     def calculate_iou(self, box1: Tuple[int, int, int, int], box2: Tuple[int, int, int, int]) -> float:
         """Calculate Intersection over Union for bounding boxes"""

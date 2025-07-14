@@ -50,8 +50,8 @@ async def get_bill(request: Request):
     for item in items:
         item_name = item[1] # Assuming item name is at index 1
         vector_db = request.app.state.vector_db
-        item_info = vector_db.query(item_name)
-        items_with_info.append((*item, item_info)) # Append item_info to the existing item tuple
+        # item_info = vector_db.query(item_name)
+        items_with_info.append((*item, "")) # Append item_info to the existing item tuple
     
     return {"total_bill": total, "items": items_with_info}
 
