@@ -124,9 +124,10 @@ This will:
 ✅ ByteTrack-based object tracking  
 ✅ Item re-identification and ID persistence  
 ✅ API-based item add/remove updates  
-✅ Modular and extensible architecture  
+✅ Modular and extensible architecture
 
 🔜 Planned Enhancements:
+
 - [ ] Frame skipping for improved real-time performance
 - [ ] Object quantity tracking (e.g., 2 apples)
 - [ ] Video recording support
